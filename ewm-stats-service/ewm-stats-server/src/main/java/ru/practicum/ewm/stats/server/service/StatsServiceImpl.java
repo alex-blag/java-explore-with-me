@@ -1,11 +1,15 @@
 package ru.practicum.ewm.stats.server.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.stats.common.dto.EndpointHitPostDto;
-import ru.practicum.ewm.stats.server.entity.ViewStats;
 import ru.practicum.ewm.stats.server.entity.EndpointHit;
+import ru.practicum.ewm.stats.server.entity.ViewStats;
+import ru.practicum.ewm.stats.server.entity.ViewStatsField;
 import ru.practicum.ewm.stats.server.repository.StatsRepository;
 
 import java.time.LocalDateTime;
@@ -33,9 +37,11 @@ public class StatsServiceImpl implements StatsService {
             List<String> uris,
             boolean unique
     ) {
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(ViewStatsField.HITS).descending());
+
         return unique
-                ? statsRepository.findAllDistinctIpByTimestampBetweenAndUriIn(start, end, uris)
-                : statsRepository.findAllByTimestampBetweenAndUriIn(start, end, uris);
+                ? statsRepository.findAllDistinctIpByTimestampBetweenAndUriIn(start, end, uris, pageable)
+                : statsRepository.findAllByTimestampBetweenAndUriIn(start, end, uris, pageable);
     }
 
     private EndpointHit toEndpointHit(EndpointHitPostDto endpointHitPostDto) {
