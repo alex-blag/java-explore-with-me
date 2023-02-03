@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS endpoint_hits CASCADE;
+
+CREATE TABLE endpoint_hits (
+    id          BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    app         CHARACTER VARYING(100) NOT NULL,
+    uri         CHARACTER VARYING(100) NOT NULL,
+    ip          CHARACTER VARYING(15) NOT NULL,
+    time_stamp  TIMESTAMP NOT NULL,
+
+    CONSTRAINT pk_endpoint_hits PRIMARY KEY (id)
+);
