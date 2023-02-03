@@ -11,7 +11,7 @@ public class StatsMapper {
 
     public static EndpointHit toEndpointHit(EndpointHitPostDto dto) {
         ServiceApp serviceApp = new ServiceApp();
-        serviceApp.setApp(dto.getApp());
+        serviceApp.setName(dto.getApp());
 
         EndpointHit endpointHit = new EndpointHit();
         endpointHit.setServiceApp(serviceApp);
@@ -24,7 +24,7 @@ public class StatsMapper {
     public static EndpointHitPostDto toEndpointHitDto(EndpointHit endpointHit) {
         EndpointHitPostDto dto = new EndpointHitPostDto();
         dto.setId(endpointHit.getId());
-        dto.setApp(endpointHit.getServiceApp().getApp());
+        dto.setApp(endpointHit.getServiceApp().getName());
         dto.setUri(endpointHit.getUri());
         dto.setIp(endpointHit.getIp());
         dto.setTimestamp(endpointHit.getTimestamp());

@@ -24,7 +24,7 @@ public class ServiceApp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "app", nullable = false)
-    private String app;
+    @Column(name = "name", nullable = false)
+    private String name;
 
 }
