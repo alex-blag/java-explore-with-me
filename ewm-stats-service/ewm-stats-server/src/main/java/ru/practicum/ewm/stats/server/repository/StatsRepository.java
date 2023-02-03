@@ -12,12 +12,13 @@ import java.util.List;
 public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
 
     @Query(
-            "SELECT eh.app AS app, " +
+            "SELECT sa.app AS app, " +
                     "   eh.uri AS uri, " +
                     "   COUNT(DISTINCT eh.ip) AS hits " +
                     "FROM EndpointHit eh " +
+                    "JOIN ServiceApp sa " +
                     "WHERE eh.timestamp BETWEEN :start AND :end " +
-                    "GROUP BY eh.app, eh.uri"
+                    "GROUP BY sa.app, eh.uri"
     )
     List<ViewStats> findAllDistinctIpByTimestampBetween(
             LocalDateTime start,
@@ -26,12 +27,13 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     );
 
     @Query(
-            "SELECT eh.app AS app, " +
+            "SELECT sa.app AS app, " +
                     "   eh.uri AS uri, " +
                     "   COUNT(eh.ip) AS hits " +
                     "FROM EndpointHit eh " +
+                    "JOIN ServiceApp sa " +
                     "WHERE eh.timestamp BETWEEN :start AND :end " +
-                    "GROUP BY eh.app, eh.uri"
+                    "GROUP BY sa.app, eh.uri"
     )
     List<ViewStats> findAllByTimestampBetween(
             LocalDateTime start,
@@ -40,13 +42,14 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     );
 
     @Query(
-            "SELECT eh.app AS app, " +
+            "SELECT sa.app AS app, " +
                     "   eh.uri AS uri, " +
                     "   COUNT(DISTINCT eh.ip) AS hits " +
                     "FROM EndpointHit eh " +
+                    "JOIN ServiceApp sa " +
                     "WHERE eh.timestamp BETWEEN :start AND :end " +
                     "   AND eh.uri IN :uris " +
-                    "GROUP BY eh.app, eh.uri"
+                    "GROUP BY sa.app, eh.uri"
     )
     List<ViewStats> findAllDistinctIpByTimestampBetweenAndUriIn(
             LocalDateTime start,
@@ -56,13 +59,14 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
     );
 
     @Query(
-            "SELECT eh.app AS app, " +
+            "SELECT sa.app AS app, " +
                     "   eh.uri AS uri, " +
                     "   COUNT(eh.ip) AS hits " +
                     "FROM EndpointHit eh " +
+                    "JOIN ServiceApp sa " +
                     "WHERE eh.timestamp BETWEEN :start AND :end " +
                     "   AND eh.uri IN :uris " +
-                    "GROUP BY eh.app, eh.uri"
+                    "GROUP BY sa.app, eh.uri"
     )
     List<ViewStats> findAllByTimestampBetweenAndUriIn(
             LocalDateTime start,
