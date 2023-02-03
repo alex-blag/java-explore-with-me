@@ -17,6 +17,34 @@ public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
                     "   COUNT(DISTINCT eh.ip) AS hits " +
                     "FROM EndpointHit eh " +
                     "WHERE eh.timestamp BETWEEN :start AND :end " +
+                    "GROUP BY eh.app, eh.uri"
+    )
+    List<ViewStats> findAllDistinctIpByTimestampBetween(
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
+
+    @Query(
+            "SELECT eh.app AS app, " +
+                    "   eh.uri AS uri, " +
+                    "   COUNT(eh.ip) AS hits " +
+                    "FROM EndpointHit eh " +
+                    "WHERE eh.timestamp BETWEEN :start AND :end " +
+                    "GROUP BY eh.app, eh.uri"
+    )
+    List<ViewStats> findAllByTimestampBetween(
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
+
+    @Query(
+            "SELECT eh.app AS app, " +
+                    "   eh.uri AS uri, " +
+                    "   COUNT(DISTINCT eh.ip) AS hits " +
+                    "FROM EndpointHit eh " +
+                    "WHERE eh.timestamp BETWEEN :start AND :end " +
                     "   AND eh.uri IN :uris " +
                     "GROUP BY eh.app, eh.uri"
     )

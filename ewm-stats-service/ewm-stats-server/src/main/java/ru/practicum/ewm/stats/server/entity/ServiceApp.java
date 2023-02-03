@@ -10,34 +10,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "endpoint_hits")
+@Table(name = "service_app")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class EndpointHit {
+public class ServiceApp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "app_id", nullable = false)
-    private ServiceApp serviceApp;
-
-    @Column(name = "uri", nullable = false)
-    private String uri;
-
-    @Column(name = "ip", nullable = false)
-    private String ip;
-
-    @Column(name = "time_stamp", nullable = false)
-    private LocalDateTime timestamp;
+    @Column(name = "app", nullable = false)
+    private String app;
 
 }

@@ -1,15 +1,12 @@
 package ru.practicum.ewm.stats.server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.stats.common.dto.EndpointHitPostDto;
 import ru.practicum.ewm.stats.server.entity.EndpointHit;
 import ru.practicum.ewm.stats.server.entity.ViewStats;
-import ru.practicum.ewm.stats.server.entity.ViewStatsField;
 import ru.practicum.ewm.stats.server.repository.StatsRepository;
 
 import java.time.LocalDateTime;
@@ -31,14 +28,25 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
+    public List<ViewStats> findAllByTimestampBetween(
+            LocalDateTime start,
+            LocalDateTime end,
+            boolean unique,
+            Pageable pageable
+    ) {
+        return unique
+                ? statsRepository.findAllDistinctIpByTimestampBetween(start, end, pageable)
+                : statsRepository.findAllByTimestampBetween(start, end, pageable);
+    }
+
+    @Override
     public List<ViewStats> findAllByTimestampBetweenAndUriIn(
             LocalDateTime start,
             LocalDateTime end,
             List<String> uris,
-            boolean unique
+            boolean unique,
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(ViewStatsField.HITS).descending());
-
         return unique
                 ? statsRepository.findAllDistinctIpByTimestampBetweenAndUriIn(start, end, uris, pageable)
                 : statsRepository.findAllByTimestampBetweenAndUriIn(start, end, uris, pageable);

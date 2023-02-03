@@ -31,7 +31,7 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public EndpointHitPostDto postHit(EndpointHitPostDto endpointHitPostDto) {
-        log.debug("postHit({})", endpointHitPostDto);
+        log.debug("postHit : {}", endpointHitPostDto);
 
         URI hitUri = UriComponentsBuilder
                 .fromUriString(serverUri)
@@ -46,7 +46,7 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public ViewStatsDto getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        log.debug("getStats(start = {}, end = {}, uris = {}, unique = {})", start, end, uris, unique);
+        log.debug("getStats : start = {}, end = {}, uris = {}, unique = {}", start, end, uris, unique);
 
         URI statsUri = UriComponentsBuilder
                 .fromUriString(serverUri)
