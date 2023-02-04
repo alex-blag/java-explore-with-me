@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.stats.common.dto.EndpointHitPostDto;
 import ru.practicum.ewm.stats.server.entity.EndpointHit;
+import ru.practicum.ewm.stats.server.entity.ServiceApp;
 import ru.practicum.ewm.stats.server.entity.ViewStats;
-import ru.practicum.ewm.stats.server.repository.StatsRepository;
+import ru.practicum.ewm.stats.server.repository.EndpointHitRepository;
+import ru.practicum.ewm.stats.server.repository.ServiceAppRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,14 +19,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
 
-    private final StatsRepository statsRepository;
+    private final EndpointHitRepository endpointHitRepository;
+
+    private final ServiceAppRepository serviceAppRepository;
 
     @Transactional
     @Override
     public EndpointHitPostDto save(EndpointHitPostDto endpointHitPostDto) {
         EndpointHit endpointHit = toEndpointHit(endpointHitPostDto);
+        ServiceApp serviceApp = getServiceApp(endpointHit.getServiceApp());
+        endpointHit.setServiceApp(serviceApp);
 
-        return toEndpointHitDto(statsRepository.save(endpointHit));
+        return toEndpointHitDto(endpointHitRepository.save(endpointHit));
     }
 
     @Override
@@ -35,8 +41,8 @@ public class StatsServiceImpl implements StatsService {
             Pageable pageable
     ) {
         return unique
-                ? statsRepository.findAllDistinctIpByTimestampBetween(start, end, pageable)
-                : statsRepository.findAllByTimestampBetween(start, end, pageable);
+                ? endpointHitRepository.findAllDistinctIpByTimestampBetween(start, end, pageable)
+                : endpointHitRepository.findAllByTimestampBetween(start, end, pageable);
     }
 
     @Override
@@ -48,8 +54,16 @@ public class StatsServiceImpl implements StatsService {
             Pageable pageable
     ) {
         return unique
-                ? statsRepository.findAllDistinctIpByTimestampBetweenAndUriIn(start, end, uris, pageable)
-                : statsRepository.findAllByTimestampBetweenAndUriIn(start, end, uris, pageable);
+                ? endpointHitRepository.findAllDistinctIpByTimestampBetweenAndUriIn(start, end, uris, pageable)
+                : endpointHitRepository.findAllByTimestampBetweenAndUriIn(start, end, uris, pageable);
+    }
+
+    private ServiceApp getServiceApp(ServiceApp serviceApp) {
+        ServiceApp sa = serviceAppRepository.findByName(serviceApp.getName());
+        if (sa == null) {
+            sa = serviceAppRepository.save(serviceApp);
+        }
+        return sa;
     }
 
     private EndpointHit toEndpointHit(EndpointHitPostDto endpointHitPostDto) {

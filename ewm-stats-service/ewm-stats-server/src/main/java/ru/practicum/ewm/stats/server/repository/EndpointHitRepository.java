@@ -9,7 +9,7 @@ import ru.practicum.ewm.stats.server.entity.ViewStats;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface StatsRepository extends JpaRepository<EndpointHit, Long> {
+public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
 
     @Query(
             "SELECT sa.name AS app, " +
