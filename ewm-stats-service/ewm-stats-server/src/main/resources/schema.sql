@@ -6,7 +6,8 @@ CREATE TABLE service_app (
     id          BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
     name        CHARACTER VARYING(100) NOT NULL,
 
-    CONSTRAINT pk_service_app PRIMARY KEY (id)
+    CONSTRAINT pk_service_app PRIMARY KEY (id),
+    CONSTRAINT uc_service_app UNIQUE (name)
 );
 
 CREATE TABLE endpoint_hits (
