@@ -8,8 +8,8 @@ public class CommonUtils {
 
     public static final String EWM_STATS_SERVER_URI_PROPERTY = "${ewm.stats.server.uri}";
 
-    public static final String EWM_STATS_HIT_RESOURCE = "/hit";
+    public static final String EWM_STATS_HIT_ENDPOINT = "/hit";
 
-    public static final String EWM_STATS_STATS_RESOURCE = "/stats";
+    public static final String EWM_STATS_STATS_ENDPOINT = "/stats";
 
 }

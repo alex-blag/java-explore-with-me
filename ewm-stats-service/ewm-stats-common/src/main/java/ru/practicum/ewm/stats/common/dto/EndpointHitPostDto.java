@@ -24,7 +24,7 @@ public class EndpointHitPostDto {
     private String uri;
 
     @NotBlank
-    @IPv4
+//    @IPv4
     private String ip;
 
     @NotNull
