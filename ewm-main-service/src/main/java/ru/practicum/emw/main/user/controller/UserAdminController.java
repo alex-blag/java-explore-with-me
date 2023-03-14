@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ import ru.practicum.emw.main.user.entity.User;
 import ru.practicum.emw.main.user.service.UserAdminService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.emw.main.common.CommonUtils.DEFAULT_FROM;
@@ -29,8 +32,9 @@ import static ru.practicum.emw.main.user.dto.UserMapper.toUsersDto;
 
 @RestController
 @RequestMapping(path = "/admin/users")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 class UserAdminController {
 
     private final UserAdminService userAdminService;
@@ -38,8 +42,8 @@ class UserAdminController {
     @GetMapping
     List<UserDto> getAll(
             @RequestParam(required = false) List<Long> ids,
-            @RequestParam(required = false, defaultValue = DEFAULT_FROM) int from,
-            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size
+            @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
+            @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size
     ) {
         log.debug("getAll (ids = {}, from = {}, size = {})", ids, from, size);
 

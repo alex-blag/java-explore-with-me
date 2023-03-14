@@ -12,14 +12,16 @@ import ru.practicum.emw.main.compilation.service.CompilationService;
 import ru.practicum.emw.main.event.entity.Event;
 import ru.practicum.emw.main.event.service.EventAdminService;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
+import static ru.practicum.emw.main.compilation.dto.CompilationMapper.toCompilation;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CompilationAdminServiceImpl implements CompilationAdminService {
 
     private final CompilationService compilationService;
@@ -31,15 +33,10 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
     public Compilation save(NewCompilationDto newCompilationDto) {
         log.debug("save (newCompilationDto = {})", newCompilationDto);
 
-        Compilation compilation = new Compilation();
-
         List<Long> eventIds = newCompilationDto.getEvents();
         List<Event> events = eventAdminService.findAllByIds(eventIds);
-        compilation.setEvents(events);
 
-        compilation.setPinned(newCompilationDto.getPinned());
-
-        compilation.setTitle(newCompilationDto.getTitle());
+        Compilation compilation = toCompilation(newCompilationDto, new HashSet<>(events));
 
         return compilationService.save(compilation);
     }
@@ -53,7 +50,8 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
 
         List<Long> eventIds = updateCompilationRequest.getEvents();
         if (eventIds != null) {
-            compilation.setEvents(eventAdminService.findAllByIds(eventIds));
+            List<Event> events = eventAdminService.findAllByIds(eventIds);
+            compilation.setEvents(new HashSet<>(events));
         }
 
         Boolean pinned = updateCompilationRequest.getPinned();

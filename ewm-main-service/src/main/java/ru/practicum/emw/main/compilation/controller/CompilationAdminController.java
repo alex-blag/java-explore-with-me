@@ -23,8 +23,8 @@ import static ru.practicum.emw.main.compilation.dto.CompilationMapper.toCompilat
 
 @RestController
 @RequestMapping(path = "/admin/compilations")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CompilationAdminController {
 
     private final CompilationAdminService compilationAdminService;
@@ -37,6 +37,7 @@ public class CompilationAdminController {
         log.debug("post (newCompilationDto = {})", newCompilationDto);
 
         Compilation compilation = compilationAdminService.save(newCompilationDto);
+
         return toCompilationDto(compilation);
     }
 
@@ -58,6 +59,7 @@ public class CompilationAdminController {
         log.debug("patch (compId = {}, updateCompilationRequest = {})", compId, updateCompilationRequest);
 
         Compilation compilation = compilationAdminService.updateById(compId, updateCompilationRequest);
+
         return toCompilationDto(compilation);
     }
 

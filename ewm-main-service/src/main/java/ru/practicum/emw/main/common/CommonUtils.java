@@ -34,6 +34,10 @@ public class CommonUtils {
 
     public static final String DEFAULT_SIZE = "10";
 
+    public static final int ONE_HOUR_BEFORE_EARLY_START = 1;
+
+    public static final int TWO_HOURS_BEFORE_EARLY_START = 2;
+
     public static Pageable getPageRequestUnsorted(int from, int size) {
         int page = from / size;
         return PageRequest.of(page, size, Sort.unsorted());

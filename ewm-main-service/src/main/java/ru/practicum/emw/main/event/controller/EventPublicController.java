@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ import ru.practicum.emw.main.event.service.EventPublicService;
 import ru.practicum.emw.main.stats.service.StatsPublicService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,8 +38,9 @@ import static ru.practicum.emw.main.event.dto.EventMapper.toEventShortDtos;
 
 @RestController
 @RequestMapping(path = EVENTS_ENDPOINT)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 class EventPublicController {
 
     private final EventPublicService eventPublicService;
@@ -51,10 +55,10 @@ class EventPublicController {
             @RequestParam(required = false) String paid,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeEnd,
-            @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
+            @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) EventPublicSort sort,
-            @RequestParam(required = false, defaultValue = DEFAULT_FROM) int from,
-            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size,
+            @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
+            @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size,
             HttpServletRequest request
     ) {
         log.debug(

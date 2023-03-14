@@ -28,18 +28,18 @@ import java.util.List;
 import static org.springframework.util.StringUtils.hasText;
 import static ru.practicum.emw.main.common.CheckUtils.checkEventCanBeUpdatedOrThrow;
 import static ru.practicum.emw.main.common.CheckUtils.checkEventDateAfterEarlyStartOrThrow;
+import static ru.practicum.emw.main.common.CommonUtils.TWO_HOURS_BEFORE_EARLY_START;
 import static ru.practicum.emw.main.common.CommonUtils.toPage;
+import static ru.practicum.emw.main.event.dto.EventMapper.toEvent;
 import static ru.practicum.emw.main.event.dto.LocationMapper.toLocation;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class EventPrivateServiceImpl implements EventPrivateService {
 
     private static final QEvent Q_EVENT = QEvent.event;
-
-    private static final int HOURS_BEFORE_EARLY_START = 2;
 
     private final EventService eventService;
 
@@ -52,41 +52,9 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     public Event saveByInitiatorId(long initiatorId, NewEventDto newEventDto) {
         log.debug("saveByInitiatorId (initiatorId = {}, newEventDto = {})", initiatorId, newEventDto);
 
-        Event event = new Event();
-
-        event.setAnnotation(newEventDto.getAnnotation());
-
-        long categoryId = newEventDto.getCategory();
-        Category category = categoryPrivateService.findById(categoryId);
-        event.setCategory(category);
-
-        event.setCreatedOn(LocalDateTime.now());
-
-        event.setDescription(newEventDto.getDescription());
-
-        LocalDateTime eventDate = newEventDto.getEventDate();
-        checkEventDateAfterEarlyStartOrThrow(eventDate, HOURS_BEFORE_EARLY_START);
-        event.setEventDate(eventDate);
-
         User initiator = userPrivateService.findById(initiatorId);
-        event.setInitiator(initiator);
-
-        Location location = toLocation(newEventDto.getLocation());
-        event.setLocation(location);
-
-        event.setPaid(newEventDto.getPaid());
-
-        event.setParticipantLimit(newEventDto.getParticipantLimit());
-
-        event.setRequestModeration(newEventDto.getRequestModeration());
-
-        event.setState(State.PENDING);
-
-        event.setTitle(newEventDto.getTitle());
-
-        event.setConfirmedRequests(0L);
-
-        event.setViews(0L);
+        Category category = categoryPrivateService.findById(newEventDto.getCategory());
+        Event event = toEvent(newEventDto, initiator, category, TWO_HOURS_BEFORE_EARLY_START);
 
         return eventService.save(event);
     }
@@ -121,7 +89,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
         LocalDateTime eventDate = updateEventUserRequest.getEventDate();
         if (eventDate != null) {
-            checkEventDateAfterEarlyStartOrThrow(eventDate, HOURS_BEFORE_EARLY_START);
+            checkEventDateAfterEarlyStartOrThrow(eventDate, TWO_HOURS_BEFORE_EARLY_START);
             event.setEventDate(eventDate);
         }
 

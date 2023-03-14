@@ -12,7 +12,7 @@ import ru.practicum.emw.main.category.service.CategoryAdminService;
 import ru.practicum.emw.main.category.service.CategoryService;
 import ru.practicum.emw.main.event.service.EventAdminService;
 
-import static org.springframework.util.StringUtils.hasText;
+import static ru.practicum.emw.main.category.dto.CategoryMapper.toCategory;
 import static ru.practicum.emw.main.common.CheckUtils.checkCategoryHasNoAssociatedEventsOrThrow;
 
 @Service
@@ -31,9 +31,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     public Category save(NewCategoryDto newCategoryDto) {
         log.debug("save (newCategoryDto = {})", newCategoryDto);
 
-        Category category = new Category();
-
-        category.setName(newCategoryDto.getName());
+        Category category = toCategory(newCategoryDto);
 
         return categoryService.save(category);
     }
@@ -45,10 +43,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
 
         Category category = this.findById(id);
 
-        String name = categoryDto.getName();
-        if (hasText(name)) {
-            category.setName(name);
-        }
+        category.setName(categoryDto.getName());
 
         return category;
     }

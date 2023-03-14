@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.emw.main.request.dto.RequestStatus;
 import ru.practicum.emw.main.request.entity.QRequest;
 import ru.practicum.emw.main.request.entity.Request;
@@ -22,8 +23,8 @@ import static ru.practicum.emw.main.exception.ExceptionUtils.getRequestNotFoundE
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
     private static final QRequest Q_REQUEST = QRequest.request;

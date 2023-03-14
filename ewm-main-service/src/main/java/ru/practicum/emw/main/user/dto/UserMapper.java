@@ -40,4 +40,14 @@ public class UserMapper {
         return dto;
     }
 
+    public static User toUser(NewUserRequest newUserRequest) {
+        User user = new User();
+
+        user.setName(newUserRequest.getName());
+
+        user.setEmail(newUserRequest.getEmail());
+
+        return user;
+    }
+
 }

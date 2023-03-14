@@ -14,6 +14,7 @@ import ru.practicum.emw.main.compilation.service.CompilationService;
 import ru.practicum.emw.main.event.entity.Event;
 import ru.practicum.emw.main.event.service.EventPublicService;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,8 +22,8 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CompilationPublicServiceImpl implements CompilationPublicService {
 
     private static final QCompilation Q_COMPILATION = QCompilation.compilation;
@@ -37,7 +38,7 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
 
         Compilation compilation = compilationService.findById(id);
 
-        List<Event> events = compilation.getEvents();
+        List<Event> events = new ArrayList<>(compilation.getEvents());
 
         eventPublicService.updateConfirmedRequestsAndViews(events);
 

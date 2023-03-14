@@ -10,8 +10,8 @@ import ru.practicum.emw.main.user.service.UserService;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class UserPrivateServiceImpl implements UserPrivateService {
 
     private final UserService userService;

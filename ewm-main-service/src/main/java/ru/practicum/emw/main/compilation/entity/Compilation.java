@@ -7,7 +7,7 @@ import lombok.ToString;
 import ru.practicum.emw.main.event.entity.Event;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "compilations")
@@ -27,7 +27,7 @@ public class Compilation {
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private List<Event> events;
+    private Set<Event> events;
 
     @Column(name = "pinned")
     private Boolean pinned;

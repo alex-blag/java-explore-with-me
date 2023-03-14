@@ -34,8 +34,8 @@ import static ru.practicum.emw.main.request.dto.RequestMapper.toParticipationReq
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class RequestPrivateServiceImpl implements RequestPrivateService {
 
     private static final QRequest Q_REQUEST = QRequest.request;

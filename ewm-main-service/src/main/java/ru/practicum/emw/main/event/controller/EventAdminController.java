@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ import ru.practicum.emw.main.event.entity.State;
 import ru.practicum.emw.main.event.service.EventAdminService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,8 +34,9 @@ import static ru.practicum.emw.main.event.dto.EventMapper.toEventFullDtos;
 
 @RestController
 @RequestMapping(path = "/admin/events")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 class EventAdminController {
 
     private final EventAdminService eventAdminService;
@@ -44,8 +48,8 @@ class EventAdminController {
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime rangeEnd,
-            @RequestParam(required = false, defaultValue = DEFAULT_FROM) int from,
-            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size
+            @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
+            @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size
     ) {
         log.debug(
                 "getAll (users = {}, states = {}, categories = {}, rangeStart = {}, rangeEnd = {}, from = {}, size = {})",
@@ -62,6 +66,7 @@ class EventAdminController {
 
         Pageable pageable = getPageRequestUnsorted(from, size);
         List<Event> events = eventAdminService.findAllByParams(params, pageable);
+
         return toEventFullDtos(events);
     }
 
@@ -73,6 +78,7 @@ class EventAdminController {
         log.debug("patch (eventId = {}, updateEventAdminRequest = {})", eventId, updateEventAdminRequest);
 
         Event event = eventAdminService.updateById(eventId, updateEventAdminRequest);
+        
         return toEventFullDto(event);
     }
 

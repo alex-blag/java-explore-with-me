@@ -24,22 +24,22 @@ import ru.practicum.emw.main.event.service.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 import static ru.practicum.emw.main.common.CheckUtils.checkEventDateAfterEarlyStartOrThrow;
 import static ru.practicum.emw.main.common.CheckUtils.checkEventNotPublishedYetOrThrow;
 import static ru.practicum.emw.main.common.CheckUtils.checkEventPendingOrThrow;
+import static ru.practicum.emw.main.common.CommonUtils.ONE_HOUR_BEFORE_EARLY_START;
 import static ru.practicum.emw.main.common.CommonUtils.toPage;
 import static ru.practicum.emw.main.event.dto.LocationMapper.toLocation;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class EventAdminServiceImpl implements EventAdminService {
 
     private static final QEvent Q_EVENT = QEvent.event;
-
-    private static final int HOURS_BEFORE_EARLY_START = 1;
 
     private final EventService eventService;
 
@@ -71,7 +71,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         LocalDateTime eventDate = updateEventAdminRequest.getEventDate();
         if (eventDate != null) {
-            checkEventDateAfterEarlyStartOrThrow(id, eventDate, HOURS_BEFORE_EARLY_START);
+            checkEventDateAfterEarlyStartOrThrow(id, eventDate, ONE_HOUR_BEFORE_EARLY_START);
             event.setEventDate(eventDate);
         }
 
@@ -134,8 +134,13 @@ public class EventAdminServiceImpl implements EventAdminService {
     public List<Event> findAllByIds(List<Long> ids) {
         log.debug("findAllByIds (ids = {})", ids);
 
+        if (isEmpty(ids)) {
+            return List.of();
+        }
+
         Predicate p = buildQEventPredicateByIds(ids);
         List<Event> events = eventService.findAll(p);
+
         eventService.updateConfirmedRequestsAndViews(events);
 
         return events;
@@ -147,6 +152,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         Predicate p = buildQEventPredicateByParams(eventAdminParams);
         List<Event> events = eventService.findAll(p);
+
         eventService.updateConfirmedRequestsAndViews(events);
 
         return toPage(events, pageable).getContent();

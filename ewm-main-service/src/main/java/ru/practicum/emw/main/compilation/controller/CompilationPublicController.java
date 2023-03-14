@@ -3,6 +3,7 @@ package ru.practicum.emw.main.compilation.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,8 @@ import ru.practicum.emw.main.compilation.dto.CompilationDto;
 import ru.practicum.emw.main.compilation.entity.Compilation;
 import ru.practicum.emw.main.compilation.service.CompilationPublicService;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.emw.main.common.CommonUtils.DEFAULT_FROM;
@@ -22,8 +25,9 @@ import static ru.practicum.emw.main.compilation.dto.CompilationMapper.toCompilat
 
 @RestController
 @RequestMapping(path = "/compilations")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 class CompilationPublicController {
 
     private final CompilationPublicService compilationPublicService;
@@ -31,13 +35,14 @@ class CompilationPublicController {
     @GetMapping
     List<CompilationDto> getAll(
             @RequestParam(required = false) Boolean pinned,
-            @RequestParam(required = false, defaultValue = DEFAULT_FROM) int from,
-            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size
+            @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
+            @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size
     ) {
         log.debug("getAll (pinned = {}, from = {}, size = {})", pinned, from, size);
 
         Pageable pageable = getPageRequestUnsorted(from, size);
         List<Compilation> compilations = compilationPublicService.findAllByPinned(pinned, pageable);
+
         return toCompilationDtos(compilations);
     }
 
@@ -48,6 +53,7 @@ class CompilationPublicController {
         log.debug("get (compId = {})", compId);
 
         Compilation compilation = compilationPublicService.findById(compId);
+
         return toCompilationDto(compilation);
     }
 

@@ -15,10 +15,13 @@ import ru.practicum.emw.main.user.service.UserService;
 
 import java.util.List;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static ru.practicum.emw.main.user.dto.UserMapper.toUser;
+
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class UserAdminServiceImpl implements UserAdminService {
 
     private static final QUser Q_USER = QUser.user;
@@ -30,11 +33,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     public User save(NewUserRequest newUserRequest) {
         log.debug("save (newUserRequest = {})", newUserRequest);
 
-        User user = new User();
-
-        user.setName(newUserRequest.getName());
-
-        user.setEmail(newUserRequest.getEmail());
+        User user = toUser(newUserRequest);
 
         return userService.save(user);
     }
@@ -42,6 +41,10 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     public List<User> findByIds(List<Long> ids, Pageable pageable) {
         log.debug("findByIds (ids = {}, pageable = {})", ids, pageable);
+
+        if (isEmpty(ids)) {
+            return List.of();
+        }
 
         Predicate p = buildQUserPredicateByIds(ids);
         return userService.findAll(p, pageable);

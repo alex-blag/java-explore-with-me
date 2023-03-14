@@ -20,6 +20,7 @@ import ru.practicum.emw.main.exception.request.RequestAlreadyCreatedException;
 import ru.practicum.emw.main.exception.request.RequestNotFoundException;
 import ru.practicum.emw.main.exception.request.RequesterOwnsEventException;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -88,6 +89,11 @@ class ExceptionHandlerController {
 
     @ExceptionHandler
     ResponseEntity<ApiError> handle(MethodArgumentNotValidException e) {
+        return buildResponse(e, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    ResponseEntity<ApiError> handle(ConstraintViolationException e) {
         return buildResponse(e, HttpStatus.BAD_REQUEST);
     }
 

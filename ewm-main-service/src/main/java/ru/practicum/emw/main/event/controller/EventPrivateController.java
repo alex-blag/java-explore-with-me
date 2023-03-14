@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,8 @@ import ru.practicum.emw.main.request.entity.Request;
 import ru.practicum.emw.main.request.service.RequestPrivateService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.emw.main.common.CommonUtils.DEFAULT_FROM;
@@ -37,8 +40,9 @@ import static ru.practicum.emw.main.request.dto.RequestMapper.toParticipationReq
 
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 class EventPrivateController {
 
     private final EventPrivateService eventPrivateService;
@@ -48,13 +52,14 @@ class EventPrivateController {
     @GetMapping
     List<EventShortDto> getAll(
             @PathVariable long userId,
-            @RequestParam(required = false, defaultValue = DEFAULT_FROM) int from,
-            @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size
+            @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
+            @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size
     ) {
         log.debug("getAll (userId = {}, from = {}, size = {})", userId, from, size);
 
         Pageable pageable = getPageRequestUnsorted(from, size);
         List<Event> events = eventPrivateService.findAllByInitiatorId(userId, pageable);
+
         return toEventShortDtos(events);
     }
 
@@ -67,6 +72,7 @@ class EventPrivateController {
         log.debug("post (userId = {}, newEventDto = {})", userId, newEventDto);
 
         Event event = eventPrivateService.saveByInitiatorId(userId, newEventDto);
+
         return toEventFullDto(event);
     }
 
@@ -78,6 +84,7 @@ class EventPrivateController {
         log.debug("get (userId = {}, eventId = {})", userId, eventId);
 
         Event event = eventPrivateService.findByIdAndInitiatorId(eventId, userId);
+
         return toEventFullDto(event);
     }
 
@@ -93,6 +100,7 @@ class EventPrivateController {
         );
 
         Event event = eventPrivateService.updateByIdAndInitiatorId(eventId, userId, updateEventUserRequest);
+
         return toEventFullDto(event);
     }
 
@@ -104,6 +112,7 @@ class EventPrivateController {
         log.debug("getAllParticipationRequests (userId = {}, eventId = {})", userId, eventId);
 
         List<Request> requests = requestPrivateService.findAllByEventIdAndInitiatorId(eventId, userId);
+
         return toParticipationRequestDtos(requests);
     }
 

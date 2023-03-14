@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -31,13 +33,15 @@ public class NewEventDto {
     private LocalDateTime eventDate;
 
     @NotNull
+    @Valid
     private LocationDto location;
 
-    private Boolean paid;
+    private boolean paid;
 
-    private Integer participantLimit;
+    @PositiveOrZero
+    private int participantLimit;
 
-    private Boolean requestModeration;
+    private boolean requestModeration = true;
 
     @NotBlank
     @Size(min = 3, max = 120)

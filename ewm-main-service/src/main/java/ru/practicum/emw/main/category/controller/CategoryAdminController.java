@@ -22,8 +22,8 @@ import static ru.practicum.emw.main.category.dto.CategoryMapper.toCategoryDto;
 
 @RestController
 @RequestMapping(path = "/admin/categories")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 class CategoryAdminController {
 
     private final CategoryAdminService categoryAdminService;
@@ -36,6 +36,7 @@ class CategoryAdminController {
         log.debug("post (newCategoryDto = {})", newCategoryDto);
 
         Category category = categoryAdminService.save(newCategoryDto);
+
         return toCategoryDto(category);
     }
 
@@ -57,6 +58,7 @@ class CategoryAdminController {
         log.debug("patch (catId = {}, categoryDto = {})", catId, categoryDto);
 
         Category category = categoryAdminService.updateById(catId, categoryDto);
+
         return toCategoryDto(category);
     }
 

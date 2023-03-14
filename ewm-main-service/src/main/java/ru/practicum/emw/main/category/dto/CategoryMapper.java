@@ -15,6 +15,7 @@ public class CategoryMapper {
         CategoryDto dto = new CategoryDto();
 
         dto.setId(category.getId());
+
         dto.setName(category.getName());
 
         return dto;
@@ -25,6 +26,14 @@ public class CategoryMapper {
                 .stream()
                 .map(CategoryMapper::toCategoryDto)
                 .collect(toList());
+    }
+
+    public static Category toCategory(NewCategoryDto newCategoryDto) {
+        Category category = new Category();
+
+        category.setName(newCategoryDto.getName());
+
+        return category;
     }
 
 }

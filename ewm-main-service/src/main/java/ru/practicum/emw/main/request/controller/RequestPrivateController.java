@@ -22,8 +22,8 @@ import static ru.practicum.emw.main.request.dto.RequestMapper.toParticipationReq
 
 @RestController
 @RequestMapping(path = "/users/{userId}/requests")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 class RequestPrivateController {
 
     private final RequestPrivateService requestPrivateService;
@@ -35,6 +35,7 @@ class RequestPrivateController {
         log.debug("getAll (userId = {})", userId);
 
         List<Request> requests = requestPrivateService.findAllByRequesterId(userId);
+
         return toParticipationRequestDtos(requests);
     }
 
@@ -47,6 +48,7 @@ class RequestPrivateController {
         log.debug("post (userId = {}, eventId = {})", userId, eventId);
 
         Request request = requestPrivateService.saveByEventIdAndRequesterId(eventId, userId);
+
         return toParticipationRequestDto(request);
     }
 
@@ -58,6 +60,7 @@ class RequestPrivateController {
         log.debug("patch (userId = {}, requestId = {})", userId, requestId);
 
         Request request = requestPrivateService.cancelByIdAndRequesterId(requestId, userId);
+
         return toParticipationRequestDto(request);
     }
 
