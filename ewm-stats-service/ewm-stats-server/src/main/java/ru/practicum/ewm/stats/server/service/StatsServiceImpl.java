@@ -14,8 +14,8 @@ import ru.practicum.ewm.stats.server.repository.ServiceAppRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
 
@@ -23,8 +23,8 @@ public class StatsServiceImpl implements StatsService {
 
     private final ServiceAppRepository serviceAppRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public EndpointHitPostDto save(EndpointHitPostDto endpointHitPostDto) {
         EndpointHit endpointHit = toEndpointHit(endpointHitPostDto);
         ServiceApp serviceApp = getServiceApp(endpointHit.getServiceApp());
