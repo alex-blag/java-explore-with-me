@@ -14,6 +14,8 @@ import ru.practicum.emw.main.exception.event.EventNotFoundException;
 import ru.practicum.emw.main.exception.event.EventNotPendingException;
 import ru.practicum.emw.main.exception.event.EventNotPublishedException;
 import ru.practicum.emw.main.exception.event.EventParticipantLimitReachedException;
+import ru.practicum.emw.main.exception.location.LocationHasAssociatedEventException;
+import ru.practicum.emw.main.exception.location.LocationNotFoundException;
 import ru.practicum.emw.main.exception.request.RequestAlreadyCreatedException;
 import ru.practicum.emw.main.exception.request.RequestNotFoundException;
 import ru.practicum.emw.main.exception.request.RequestNotPendingException;
@@ -174,6 +176,24 @@ public class ExceptionUtils {
                         eventId,
                         requesterId
                 )
+        );
+    }
+
+    public static LocationNotFoundException getLocationNotFoundException(long locationId) {
+        return new LocationNotFoundException(
+                String.format("%s [locationId = %d]", ExceptionMessage.LOCATION_NOT_FOUND, locationId)
+        );
+    }
+
+    public static LocationNotFoundException getLocationNotFoundException(String message) {
+        return new LocationNotFoundException(
+                String.format("%s [%s]", ExceptionMessage.LOCATION_NOT_FOUND, message)
+        );
+    }
+
+    public static LocationHasAssociatedEventException getLocationHasAssociatedEventException(long locationId) {
+        return new LocationHasAssociatedEventException(
+                String.format("%s [locationId = %d]", ExceptionMessage.LOCATION_HAS_ASSOCIATED_EVENT, locationId)
         );
     }
 

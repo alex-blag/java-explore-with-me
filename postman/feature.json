@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "a5696ff4-ab7e-4fe2-9ebf-5d1309af00f1",
+		"name": "Test Explore With Me - Feature",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10809037"
+	},
+	"item": [
+		{
+			"name": "Save location, no body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 400 'Bad Request' HTTP status code\", function () {\r",
+							"    pm.response.to.be.badRequest;    \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save location",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 201 'Created' HTTP status code and JSON body\", function () {\r",
+							"    pm.response.to.be.success;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"JSON body should have 'id', 'name', 'lat' and 'lon' fields\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('id');\r",
+							"    pm.expect(jsonData).to.have.property('name');\r",
+							"    pm.expect(jsonData).to.have.property('lat');\r",
+							"    pm.expect(jsonData).to.have.property('lon');\r",
+							"\r",
+							"    pm.collectionVariables.set('locationId', jsonData.id);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{locationName}}\",\r\n    \"lat\": {{locationLat}},\r\n    \"lon\": {{locationLon}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save location, duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 409 'Conflict' HTTP status code\", function () {\r",
+							"    pm.response.to.be.status(409);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{locationName}}\",\r\n    \"lat\": {{locationLat}},\r\n    \"lon\": {{locationLon}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update location, no body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 400 'Bad Request' HTTP status code\", function () {\r",
+							"    pm.response.to.be.badRequest;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{locationId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update location, nonexistent id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 404 'Not Found' HTTP status code\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{locationNameUpdate}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{locationNonexistentId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update location",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have 200 'Ok' HTTP status code and JSON body\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"JSON body should have 'id', 'name', 'lat' and 'lon' fields\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('id');\r",
+							"    pm.expect(jsonData).to.have.property('name');\r",
+							"    pm.expect(jsonData).to.have.property('lat');\r",
+							"    pm.expect(jsonData).to.have.property('lon');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Location should be updated\", function () {\r",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get('locationNameUpdate'));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{locationNameUpdate}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{locationId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find locations, bad params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 400 'Bad Request' HTTP status code\", function () {\r",
+							"    pm.response.to.be.badRequest;    \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations?from=-1&size=0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "-1"
+						},
+						{
+							"key": "size",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find locations, no params",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 200 'Ok' HTTP status code and JSON body\", function () {\r",
+							"    pm.response.to.be.success;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"JSON body should be an array\", function () {\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find locations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 200 'Ok' HTTP status code and JSON body\", function () {\r",
+							"    pm.response.to.be.success;\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"JSON body should be an array\", function () {\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Array should have only one element\", function () {\r",
+							"    pm.expect(jsonData.length).to.equal(1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations?ids={{locationId}}&from=0&size=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "{{locationId}}"
+						},
+						{
+							"key": "from",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete location, no id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 400 'Bad Request' HTTP status code\", function () {\r",
+							"    pm.response.to.be.badRequest;    \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete location, nonexistent id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 404 'Not Found' HTTP status code\", function () {\r",
+							"    pm.response.to.be.notFound;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{locationNonexistentId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete location",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response should have a 204 'No Content' HTTP status code\", function () {\r",
+							"    pm.response.to.be.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/admin/locations/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"locations",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{locationId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "locationId",
+			"value": 2,
+			"type": "string"
+		},
+		{
+			"key": "locationName",
+			"value": "2 Parc des Capucins",
+			"type": "string"
+		},
+		{
+			"key": "locationLat",
+			"value": "48.810043",
+			"type": "string"
+		},
+		{
+			"key": "locationLon",
+			"value": "3.086814",
+			"type": "string"
+		},
+		{
+			"key": "locationNameUpdate",
+			"value": "updated",
+			"type": "string"
+		},
+		{
+			"key": "locationNonexistentId",
+			"value": "999"
+		}
+	]
+}

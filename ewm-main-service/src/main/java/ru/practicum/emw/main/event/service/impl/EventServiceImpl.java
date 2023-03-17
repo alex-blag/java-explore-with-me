@@ -22,8 +22,8 @@ import static ru.practicum.emw.main.exception.ExceptionUtils.getEventNotFoundExc
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;

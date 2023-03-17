@@ -117,4 +117,16 @@ public class CheckUtils {
         }
     }
 
+    public static void checkLocationHasNoAssociatedEventsOrThrow(long locationId, boolean eventExists) {
+        if (eventExists) {
+            throw ExceptionUtils.getLocationHasAssociatedEventException(locationId);
+        }
+    }
+
+    public static void checkLocationExistsOrThrow(long locationId, boolean locationExists) {
+        if (!locationExists) {
+            throw ExceptionUtils.getLocationNotFoundException(locationId);
+        }
+    }
+
 }

@@ -17,8 +17,8 @@ import static ru.practicum.emw.main.exception.ExceptionUtils.getUserNotFoundExce
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(long id) {
         log.debug("deleteById (id = {})", id);
 
-        checkUserExistsOrThrow(id, this.existsById(id));
+        checkUserExistsOrThrow(id, userRepository.existsById(id));
         userRepository.deleteById(id);
     }
 

@@ -3,6 +3,7 @@ package ru.practicum.emw.main.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.emw.main.location.dto.LocationDto;
 
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;

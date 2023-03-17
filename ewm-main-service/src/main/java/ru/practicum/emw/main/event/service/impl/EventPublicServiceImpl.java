@@ -27,8 +27,8 @@ import static ru.practicum.emw.main.common.CommonUtils.toPage;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class EventPublicServiceImpl implements EventPublicService {
 
     private static final QEvent Q_EVENT = QEvent.event;

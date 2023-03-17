@@ -12,14 +12,15 @@ import ru.practicum.emw.main.category.entity.Category;
 import ru.practicum.emw.main.category.service.CategoryAdminService;
 import ru.practicum.emw.main.event.dto.EventAdminParams;
 import ru.practicum.emw.main.event.dto.EventAdminStateAction;
-import ru.practicum.emw.main.event.dto.LocationDto;
 import ru.practicum.emw.main.event.dto.UpdateEventAdminRequest;
 import ru.practicum.emw.main.event.entity.Event;
-import ru.practicum.emw.main.event.entity.Location;
 import ru.practicum.emw.main.event.entity.QEvent;
 import ru.practicum.emw.main.event.entity.State;
 import ru.practicum.emw.main.event.service.EventAdminService;
 import ru.practicum.emw.main.event.service.EventService;
+import ru.practicum.emw.main.location.dto.LocationDto;
+import ru.practicum.emw.main.location.entity.Location;
+import ru.practicum.emw.main.location.service.LocationAdminService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +32,6 @@ import static ru.practicum.emw.main.common.CheckUtils.checkEventNotPublishedYetO
 import static ru.practicum.emw.main.common.CheckUtils.checkEventPendingOrThrow;
 import static ru.practicum.emw.main.common.CommonUtils.ONE_HOUR_BEFORE_EARLY_START;
 import static ru.practicum.emw.main.common.CommonUtils.toPage;
-import static ru.practicum.emw.main.event.dto.LocationMapper.toLocation;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,6 +45,9 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     @Lazy
     private final CategoryAdminService categoryAdminService;
+
+    @Lazy
+    private final LocationAdminService locationAdminService;
 
     @Override
     @Transactional
@@ -77,7 +80,20 @@ public class EventAdminServiceImpl implements EventAdminService {
 
         LocationDto locationDto = updateEventAdminRequest.getLocation();
         if (locationDto != null) {
-            Location location = toLocation(locationDto);
+            Location location = locationAdminService.findLocationByLatAndLonOrSaveNew(
+                    locationDto.getLat(), locationDto.getLon()
+            );
+
+            Double lat = locationDto.getLat();
+            if (lat != null) {
+                location.setLat(lat);
+            }
+
+            Double lon = locationDto.getLon();
+            if (lon != null) {
+                location.setLon(lon);
+            }
+
             event.setLocation(location);
         }
 
@@ -166,15 +182,28 @@ public class EventAdminServiceImpl implements EventAdminService {
         return eventService.exists(p);
     }
 
+    @Override
+    public boolean existsByLocationId(long locationId) {
+        log.debug("existsByLocationId (locationId = {})", locationId);
+
+        Predicate p = buildQEventPredicateByLocationId(locationId);
+        return eventService.exists(p);
+    }
+
     private Predicate buildQEventPredicateByCategoryId(long categoryId) {
         return new BooleanBuilder()
                 .and(Q_EVENT.category.id.eq(categoryId));
     }
 
+    private Predicate buildQEventPredicateByLocationId(long locationId) {
+        return new BooleanBuilder()
+                .and(Q_EVENT.location.id.eq(locationId));
+    }
+
     private Predicate buildQEventPredicateByIds(List<Long> ids) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (ids != null) {
+        if (!isEmpty(ids)) {
             builder.and(Q_EVENT.id.in(ids));
         }
 

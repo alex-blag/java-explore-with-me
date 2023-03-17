@@ -36,4 +36,8 @@ public class ExceptionMessage {
 
     public static final String COMPILATION_NOT_FOUND = "Compilation not found";
 
+    public static final String LOCATION_NOT_FOUND = "Location not found";
+
+    public static final String LOCATION_HAS_ASSOCIATED_EVENT = "Location has associated event";
+
 }

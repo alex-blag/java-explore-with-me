@@ -17,4 +17,6 @@ public interface EventAdminService {
 
     boolean existsByCategoryId(long categoryId);
 
+    boolean existsByLocationId(long locationId);
+
 }

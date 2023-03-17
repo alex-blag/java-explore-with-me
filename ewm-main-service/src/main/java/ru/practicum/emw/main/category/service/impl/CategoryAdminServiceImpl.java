@@ -17,8 +17,8 @@ import static ru.practicum.emw.main.common.CheckUtils.checkCategoryHasNoAssociat
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CategoryAdminServiceImpl implements CategoryAdminService {
 
     private final CategoryService categoryService;
