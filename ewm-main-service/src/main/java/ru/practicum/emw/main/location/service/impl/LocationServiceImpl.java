@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.emw.main.location.dto.AreaOfInterest;
 import ru.practicum.emw.main.location.entity.Location;
 import ru.practicum.emw.main.location.entity.QLocation;
 import ru.practicum.emw.main.location.repository.LocationRepository;
@@ -72,6 +73,22 @@ public class LocationServiceImpl implements LocationService {
 
         checkLocationExistsOrThrow(id, locationRepository.existsById(id));
         locationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Location> findAllByAreaOfInterest(AreaOfInterest areaOfInterest) {
+        log.debug("findAllByAreaOfInterest (areaOfInterest = {})", areaOfInterest);
+
+        return locationRepository.findAllByAreaOfInterest(
+                areaOfInterest.getLat(), areaOfInterest.getLon(), areaOfInterest.getRadius()
+        );
+    }
+
+    @Override
+    public List<Long> findIdsByAreaOfInterest(AreaOfInterest areaOfInterest) {
+        return locationRepository.findIdsByAreaOfInterest(
+                areaOfInterest.getLat(), areaOfInterest.getLon(), areaOfInterest.getRadius()
+        );
     }
 
     private Predicate buildQLocationPredicateByLatAndLon(double lat, double lon) {

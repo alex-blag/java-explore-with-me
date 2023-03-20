@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import ru.practicum.emw.main.event.dto.EventPublicSort;
 import ru.practicum.emw.main.event.dto.EventShortDto;
 import ru.practicum.emw.main.event.entity.Event;
 import ru.practicum.emw.main.event.service.EventPublicService;
+import ru.practicum.emw.main.location.dto.AreaOfInterest;
 import ru.practicum.emw.main.stats.service.StatsPublicService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,11 +61,13 @@ class EventPublicController {
             @RequestParam(required = false) EventPublicSort sort,
             @RequestParam(defaultValue = DEFAULT_FROM) @PositiveOrZero int from,
             @RequestParam(defaultValue = DEFAULT_SIZE) @Positive int size,
+            @RequestParam(required = false) Long locationId,
+            @RequestBody(required = false) AreaOfInterest areaOfInterest,
             HttpServletRequest request
     ) {
         log.debug(
-                "getAll(text = {}, categories = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {})",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size
+                "getAll(text = {}, categories = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}, locationId = {}, areaOfInterest = {})",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, locationId, areaOfInterest
         );
 
         EventPublicParams params = new EventPublicParams(
@@ -71,7 +75,9 @@ class EventPublicController {
                 categories,
                 toBoolean(paid),
                 rangeStart,
-                rangeEnd
+                rangeEnd,
+                locationId,
+                areaOfInterest
         );
 
         Pageable pageable = getPageRequestUnsorted(from, size);

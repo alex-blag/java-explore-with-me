@@ -1,6 +1,7 @@
 package ru.practicum.emw.main.event.dto;
 
 import lombok.Value;
+import ru.practicum.emw.main.location.dto.AreaOfInterest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,5 +18,9 @@ public class EventPublicParams {
     LocalDateTime rangeStart;
 
     LocalDateTime rangeEnd;
+
+    Long locationId;
+
+    AreaOfInterest areaOfInterest;
 
 }

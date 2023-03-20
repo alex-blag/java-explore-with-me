@@ -21,24 +21,26 @@ public class LocationMapper {
         return dto;
     }
 
-    public static Location toLocation(LocationDto locationDto) {
+    public static Location toLocation(LocationDto dto) {
         Location location = new Location();
 
-        location.setLat(locationDto.getLat());
+        location.setLat(dto.getLat());
 
-        location.setLon(locationDto.getLon());
+        location.setLon(dto.getLon());
 
         return location;
     }
 
-    public static Location toLocation(LocationNewDto locationNewDto) {
+    public static Location toLocation(LocationNewDto dto) {
         Location location = new Location();
 
-        location.setName(locationNewDto.getName());
+        location.setName(dto.getName());
 
-        location.setLat(locationNewDto.getLat());
+        location.setLat(dto.getLat());
 
-        location.setLon(locationNewDto.getLon());
+        location.setLon(dto.getLon());
+
+        location.setDescription(dto.getDescription());
 
         return location;
     }
@@ -53,6 +55,8 @@ public class LocationMapper {
         dto.setLat(location.getLat());
 
         dto.setLon(location.getLon());
+
+        dto.setDescription(location.getDescription());
 
         return dto;
     }

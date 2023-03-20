@@ -30,10 +30,11 @@ CREATE TABLE categories (
 );
 
 CREATE TABLE locations (
-    id      BIGINT          NOT NULL GENERATED ALWAYS AS IDENTITY
-    , name  VARCHAR(120)
-    , lat   NUMERIC(8, 6)   NOT NULL
-    , lon   NUMERIC(9, 6)   NOT NULL
+    id              BIGINT          NOT NULL GENERATED ALWAYS AS IDENTITY
+    , name          VARCHAR(120)
+    , lat           NUMERIC(8, 6)   NOT NULL
+    , lon           NUMERIC(9, 6)   NOT NULL
+    , description   VARCHAR(7000)
 
     , CONSTRAINT pk_locations PRIMARY KEY (id)
     , CONSTRAINT uq_locations__lat__lon UNIQUE (lat, lon)
@@ -84,9 +85,55 @@ CREATE TABLE compilations (
 
 CREATE TABLE compilation_events (
     compilation_id  BIGINT NOT NULL
-    , event_id        BIGINT NOT NULL
+    , event_id      BIGINT NOT NULL
 
     , CONSTRAINT pk_compilation_events PRIMARY KEY (compilation_id, event_id)
     , CONSTRAINT fk_compilation_events__compilations FOREIGN KEY (compilation_id) REFERENCES compilations(id) ON DELETE CASCADE
     , CONSTRAINT fk_compilation_events__events FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
+
+CREATE EXTENSION IF NOT EXISTS cube;
+
+CREATE EXTENSION IF NOT EXISTS earthdistance;
+
+CREATE OR REPLACE FUNCTION find_location_ids_by_area_of_interest(
+    p_lat       FLOAT8
+    , p_lon     FLOAT8
+    , p_radius  INT
+)
+RETURNS SETOF BIGINT
+AS '
+BEGIN
+    RETURN QUERY
+    SELECT
+        l.id
+    FROM
+        locations l
+    WHERE
+        earth_distance(ll_to_earth(l.lat, l.lon), ll_to_earth(p_lat, p_lon)) / 1000 <= p_radius;
+END;
+' LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION find_all_locations_by_area_of_interest(
+    p_lat       FLOAT8
+    , p_lon     FLOAT8
+    , p_radius  INT
+)
+RETURNS SETOF locations
+AS '
+BEGIN
+    RETURN QUERY
+    SELECT
+        l.id
+        , l.name
+        , l.lat
+        , l.lon
+        , l.description
+    FROM
+        locations l
+    WHERE
+        earth_distance(ll_to_earth(l.lat, l.lon), ll_to_earth(p_lat, p_lon)) / 1000 <= p_radius;
+
+    RETURN;
+END;
+' LANGUAGE PLPGSQL;

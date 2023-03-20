@@ -33,4 +33,7 @@ public class Location {
     @Column(name = "lon", nullable = false)
     private Double lon;
 
+    @Column(name = "description", length = 7000)
+    private String description;
+
 }
