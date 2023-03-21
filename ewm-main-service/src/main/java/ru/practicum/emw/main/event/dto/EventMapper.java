@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.emw.main.category.entity.Category;
 import ru.practicum.emw.main.event.entity.Event;
-import ru.practicum.emw.main.event.entity.Location;
 import ru.practicum.emw.main.event.entity.State;
+import ru.practicum.emw.main.location.entity.Location;
 import ru.practicum.emw.main.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -15,9 +15,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static ru.practicum.emw.main.category.dto.CategoryMapper.toCategoryDto;
-import static ru.practicum.emw.main.common.CheckUtils.checkEventDateAfterEarlyStartOrThrow;
-import static ru.practicum.emw.main.event.dto.LocationMapper.toLocation;
-import static ru.practicum.emw.main.event.dto.LocationMapper.toLocationDto;
+import static ru.practicum.emw.main.location.dto.LocationMapper.toLocationDto;
 import static ru.practicum.emw.main.user.dto.UserMapper.toUserShortDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -106,7 +104,7 @@ public class EventMapper {
                 .collect(toSet());
     }
 
-    public static Event toEvent(NewEventDto newEventDto, User initiator, Category category, int hoursBeforeEarlyStart) {
+    public static Event toEvent(NewEventDto newEventDto, User initiator, Category category, Location location) {
         Event event = new Event();
 
         event.setAnnotation(newEventDto.getAnnotation());
@@ -117,13 +115,10 @@ public class EventMapper {
 
         event.setDescription(newEventDto.getDescription());
 
-        LocalDateTime eventDate = newEventDto.getEventDate();
-        checkEventDateAfterEarlyStartOrThrow(eventDate, hoursBeforeEarlyStart);
-        event.setEventDate(eventDate);
+        event.setEventDate(newEventDto.getEventDate());
 
         event.setInitiator(initiator);
 
-        Location location = toLocation(newEventDto.getLocation());
         event.setLocation(location);
 
         event.setPaid(newEventDto.isPaid());

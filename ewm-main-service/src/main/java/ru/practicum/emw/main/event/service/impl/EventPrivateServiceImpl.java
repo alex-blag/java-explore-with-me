@@ -10,15 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.emw.main.category.entity.Category;
 import ru.practicum.emw.main.category.service.CategoryPrivateService;
 import ru.practicum.emw.main.event.dto.EventUserStateAction;
-import ru.practicum.emw.main.event.dto.LocationDto;
 import ru.practicum.emw.main.event.dto.NewEventDto;
 import ru.practicum.emw.main.event.dto.UpdateEventUserRequest;
 import ru.practicum.emw.main.event.entity.Event;
-import ru.practicum.emw.main.event.entity.Location;
 import ru.practicum.emw.main.event.entity.QEvent;
 import ru.practicum.emw.main.event.entity.State;
 import ru.practicum.emw.main.event.service.EventPrivateService;
 import ru.practicum.emw.main.event.service.EventService;
+import ru.practicum.emw.main.location.dto.LocationDto;
+import ru.practicum.emw.main.location.entity.Location;
+import ru.practicum.emw.main.location.service.LocationPrivateService;
 import ru.practicum.emw.main.user.entity.User;
 import ru.practicum.emw.main.user.service.UserPrivateService;
 
@@ -31,7 +32,6 @@ import static ru.practicum.emw.main.common.CheckUtils.checkEventDateAfterEarlySt
 import static ru.practicum.emw.main.common.CommonUtils.TWO_HOURS_BEFORE_EARLY_START;
 import static ru.practicum.emw.main.common.CommonUtils.toPage;
 import static ru.practicum.emw.main.event.dto.EventMapper.toEvent;
-import static ru.practicum.emw.main.event.dto.LocationMapper.toLocation;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,14 +47,25 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
     private final UserPrivateService userPrivateService;
 
+    private final LocationPrivateService locationPrivateService;
+
     @Override
     @Transactional
     public Event saveByInitiatorId(long initiatorId, NewEventDto newEventDto) {
         log.debug("saveByInitiatorId (initiatorId = {}, newEventDto = {})", initiatorId, newEventDto);
 
+        checkEventDateAfterEarlyStartOrThrow(newEventDto.getEventDate(), TWO_HOURS_BEFORE_EARLY_START);
+
         User initiator = userPrivateService.findById(initiatorId);
+
         Category category = categoryPrivateService.findById(newEventDto.getCategory());
-        Event event = toEvent(newEventDto, initiator, category, TWO_HOURS_BEFORE_EARLY_START);
+
+        Location location = locationPrivateService.findLocationByLatAndLonOrSaveNew(
+                newEventDto.getLocation().getLat(),
+                newEventDto.getLocation().getLon()
+        );
+
+        Event event = toEvent(newEventDto, initiator, category, location);
 
         return eventService.save(event);
     }
@@ -95,7 +106,9 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
         LocationDto locationDto = updateEventUserRequest.getLocation();
         if (locationDto != null) {
-            Location location = toLocation(locationDto);
+            Location location = locationPrivateService.findLocationByLatAndLonOrSaveNew(
+                    locationDto.getLat(), locationDto.getLon()
+            );
             event.setLocation(location);
         }
 

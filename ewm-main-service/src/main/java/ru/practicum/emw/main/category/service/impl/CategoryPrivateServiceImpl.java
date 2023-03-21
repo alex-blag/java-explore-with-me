@@ -10,8 +10,8 @@ import ru.practicum.emw.main.category.service.CategoryService;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CategoryPrivateServiceImpl implements CategoryPrivateService {
 
     private final CategoryService categoryService;

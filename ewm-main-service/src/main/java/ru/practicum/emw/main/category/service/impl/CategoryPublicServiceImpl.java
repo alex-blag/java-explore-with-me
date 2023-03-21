@@ -13,8 +13,8 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     private final CategoryService categoryService;

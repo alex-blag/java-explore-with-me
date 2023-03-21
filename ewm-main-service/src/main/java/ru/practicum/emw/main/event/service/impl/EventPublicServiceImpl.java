@@ -15,6 +15,8 @@ import ru.practicum.emw.main.event.entity.QEvent;
 import ru.practicum.emw.main.event.entity.State;
 import ru.practicum.emw.main.event.service.EventPublicService;
 import ru.practicum.emw.main.event.service.EventService;
+import ru.practicum.emw.main.location.dto.AreaOfInterest;
+import ru.practicum.emw.main.location.service.LocationPublicService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,18 +24,21 @@ import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.StringUtils.hasText;
 import static ru.practicum.emw.main.common.CommonUtils.toPage;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class EventPublicServiceImpl implements EventPublicService {
 
     private static final QEvent Q_EVENT = QEvent.event;
 
     private final EventService eventService;
+
+    private final LocationPublicService locationPublicService;
 
     @Override
     public Event findById(long id) {
@@ -58,7 +63,21 @@ public class EventPublicServiceImpl implements EventPublicService {
                 eventPublicParams, onlyAvailable, eventPublicSort, pageable
         );
 
-        Predicate p = buildQEventPredicatePublishedByParams(eventPublicParams);
+        Long locationId = eventPublicParams.getLocationId();
+        AreaOfInterest areaOfInterest = eventPublicParams.getAreaOfInterest();
+        List<Long> locationIds;
+
+        if (locationId != null) {
+            locationIds = List.of(locationId);
+
+        } else if (areaOfInterest != null) {
+            locationIds = locationPublicService.findIdsByAreaOfInterest(areaOfInterest);
+
+        } else {
+            locationIds = null;
+        }
+
+        Predicate p = buildQEventPredicatePublishedByParams(eventPublicParams, locationIds);
         List<Event> events = eventService.findAll(p);
         eventService.updateConfirmedRequestsAndViews(events);
 
@@ -115,7 +134,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .and(Q_EVENT.id.eq(id));
     }
 
-    private Predicate buildQEventPredicatePublishedByParams(EventPublicParams params) {
+    private Predicate buildQEventPredicatePublishedByParams(EventPublicParams params, List<Long> locationIds) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(Q_EVENT.state.eq(State.PUBLISHED));
@@ -127,7 +146,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         }
 
         List<Long> categoryIds = params.getCategoryIds();
-        if (categoryIds != null) {
+        if (!isEmpty(categoryIds)) {
             builder.and(Q_EVENT.category.id.in(categoryIds));
         }
 
@@ -148,6 +167,10 @@ public class EventPublicServiceImpl implements EventPublicService {
 
         if (rangeStart == null && rangeEnd == null) {
             builder.and(Q_EVENT.eventDate.after(LocalDateTime.now()));
+        }
+
+        if (!isEmpty(locationIds)) {
+            builder.and(Q_EVENT.location.id.in(locationIds));
         }
 
         return builder;

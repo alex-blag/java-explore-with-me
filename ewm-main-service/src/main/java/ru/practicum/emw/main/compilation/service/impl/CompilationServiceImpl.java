@@ -17,8 +17,8 @@ import static ru.practicum.emw.main.exception.ExceptionUtils.getCompilationNotFo
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;

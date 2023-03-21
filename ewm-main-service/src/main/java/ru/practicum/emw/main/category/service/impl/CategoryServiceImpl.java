@@ -16,8 +16,8 @@ import static ru.practicum.emw.main.exception.ExceptionUtils.getCategoryNotFound
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
