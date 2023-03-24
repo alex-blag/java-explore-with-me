@@ -1,4 +1,3 @@
 # java-explore-with-me
 
-PR 'feature_location_processing' -> 'main': 
-https://github.com/alex-blag/java-explore-with-me/pull/5
+The application allows users to share information about interesting events and find parties to join.
